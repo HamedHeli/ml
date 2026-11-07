@@ -425,3 +425,19 @@ def test_info_nce_at_init_is_near_log_n():
     x = jnp.asarray(np.random.default_rng(0).uniform(size=(128, 64)).astype(np.float32))
     loss = float(c.info_nce(params, x, jax.random.PRNGKey(1)))
     assert 0.5 * np.log(128) < loss < 1.5 * np.log(128)
+
+
+def test_worked_example_numbers():
+    w = load("17-sequence-models-and-transformers", "worked_example")
+    out = w.ATTN_TREE @ w.VALUES
+    assert np.allclose(out, [1.9, 2.3, 2.7, 3.5])
+    res = w.X_TREE + out
+    assert np.isclose(res.var(), 2.9)
+    assert np.allclose(w.layer_norm(res), [-1.292, -0.470, 0.352, 1.409], atol=1e-3)
+    rng = np.random.default_rng(1)
+    X, W1, W2 = rng.normal(size=(7, 4)), rng.normal(size=(16, 4)), rng.normal(size=(4, 16))
+    together = w.mlp(X, W1, np.zeros(16), W2, np.zeros(4))
+    assert together.shape == (7, 4)
+    assert np.allclose(together, np.stack([w.mlp(x, W1, np.zeros(16), W2, np.zeros(4)) for x in X]))
+    _, A = w.attention(X, X, X)
+    assert np.allclose(np.triu(A, 1), 0) and np.allclose(A.sum(1), 1)

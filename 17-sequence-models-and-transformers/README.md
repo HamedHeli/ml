@@ -47,6 +47,10 @@ permutation-equivariant, so **position encodings** (sinusoidal, learned, or rota
 gives a decoder (GPT, trained to predict the next token); no mask gives an encoder (BERT, trained to fill in masked
 tokens). Vision Transformers apply the same blocks to image patches.
 
+**Worked example:** [one token through one Transformer block](worked-example.md) follows "tree" in "I am the tree I saw
+yesterday" through Q/K/V, softmax, the weighted sum of Values, residual + LayerNorm and the 4 → 16 → 4 MLP, with numbers
+you can check by hand.
+
 ## Code in this folder
 
 | File | What it implements |
@@ -54,11 +58,13 @@ tokens). Vision Transformers apply the same blocks to image patches.
 | [`rnn.py`](rnn.py) | vanilla RNN and LSTM with `lax.scan`, gradient clipping, a "recall the marked first token after `T` distractors" task |
 | [`transformer.py`](transformer.py) | causal multi-head self-attention, sinusoidal position encodings, pre-norm blocks with GELU MLPs, the same recall task, attention inspection |
 | [`tokens_and_decoding.py`](tokens_and_decoding.py) | byte-pair encoding (learn merges, encode new words), beam search vs. greedy vs. exact decoding |
+| [`worked_example.py`](worked_example.py) | the hand calculation in [worked-example.md](worked-example.md): attention, residual + LayerNorm, 4 → 16 → 4 MLP |
 
 ```bash
 python 17-sequence-models-and-transformers/rnn.py                   # about 2 min on a CPU
 python 17-sequence-models-and-transformers/transformer.py           # about 1 min
 python 17-sequence-models-and-transformers/tokens_and_decoding.py
+python 17-sequence-models-and-transformers/worked_example.py      # instant
 ```
 
 Recall the first of `T` tokens (8 symbols, chance = 0.125), test accuracy after the same training budget:
