@@ -441,3 +441,35 @@ def test_worked_example_numbers():
     assert np.allclose(together, np.stack([w.mlp(x, W1, np.zeros(16), W2, np.zeros(4)) for x in X]))
     _, A = w.attention(X, X, X)
     assert np.allclose(np.triu(A, 1), 0) and np.allclose(A.sum(1), 1)
+
+
+# 20 ---------------------------------------------------------------------------------
+def test_leakage_demos():
+    lk = load("20-evaluation", "leakage")
+    leaky, honest = lk.selection_leakage(seed=1)
+    assert leaky > 0.75 and abs(honest - 0.5) < 0.15
+    r = lk.target_leakage(seed=1)
+    assert r["offline_with_leak"] > r["honest"] > r["deployed_with_leak"] - 0.02
+    r = lk.temporal_leakage(n_series=20, seed=1)
+    assert r["random_split"] * 3 < r["time_split"]
+
+
+def test_auc_and_psi():
+    from sklearn.metrics import roc_auc_score
+    sk = load("20-evaluation", "skew")
+    rng = np.random.default_rng(0)
+    y, s = rng.integers(0, 2, 500), rng.random(500)
+    assert np.isclose(sk.auc(y, s), roc_auc_score(y, s))
+    x = rng.normal(size=20000)
+    assert sk.psi(x, rng.normal(size=20000)) < 0.01 < 0.25 < sk.psi(x, rng.normal(1, 1, 20000))
+
+
+def test_online_evaluation():
+    on = load("20-evaluation", "online")
+    n = on.sample_size_per_arm(0.10, 0.01)
+    assert 14000 < n < 15500
+    assert abs(on.power_by_simulation(reps=2000, seed=1) - 0.8) < 0.04
+    r = on.peeking(reps=2000, seed=1)
+    assert r["fixed_horizon"] < 0.07 and r["daily_peeking"] > 0.15
+    r = on.ope(seed=1)
+    assert abs(r["ips"] - r["true_new"]) < 0.01 < abs(r["naive"] - r["true_new"])

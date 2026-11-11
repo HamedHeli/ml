@@ -56,7 +56,8 @@ python 00-learning-fundamentals/cross_validation.py
 - Bias–variance decomposition of squared error, which is the regression version of the trade-off.
 - Variance of the cross-validation estimate itself, and why folds are not independent (no unbiased estimator of
   the CV variance exists; see Bengio & Grandvalet 2004). Nested CV for reporting a model that was tuned by CV.
-- Leakage: preprocessing (standardizing, feature selection, imputation) has to be fit inside each fold.
+- Leakage: preprocessing (standardizing, feature selection, imputation) has to be fit inside each fold. See
+  [20 Evaluation](../20-evaluation/) for leakage, training-serving skew and online evaluation.
 - Non-IID settings: grouped CV, time-series splits, covariate shift and importance-weighted validation.
 - Double descent is shown but not explained; the modern story involves implicit regularization and the
   minimum-norm interpolant.
@@ -75,6 +76,8 @@ python 00-learning-fundamentals/cross_validation.py
 ## Connections
 
 - → every folder: each demo in this repo reports held-out error, not training error.
+- → [20 Evaluation](../20-evaluation/): leakage, training-serving skew, and A/B tests, i.e. how this protocol breaks
+  in practice and what replaces it after deployment.
 - → [05 Feature selection and regularization](../05-feature-selection-and-regularization/): penalties such as BIC
   and `λ‖w‖²` are cheaper substitutes for cross-validation.
 - → [08 Gaussians and Bayesian learning](../08-gaussians-and-bayesian-learning/): empirical Bayes chooses

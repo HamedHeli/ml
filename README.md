@@ -22,6 +22,7 @@ over.
 flowchart LR
     subgraph S["Supervised learning (CPSC 340 Parts 1, 3)"]
         F["00 Learning fundamentals<br/>train/val/test · CV"]
+        EV["20 Evaluation<br/>leakage · skew · A/B tests"]
         T["01 Trees and ensembles<br/>trees · random forests · boosting"]
         NB["02 Naive Bayes and kNN"]
         LR["04 Linear regression<br/>least squares · GD · robust · RBF"]
@@ -50,6 +51,8 @@ flowchart LR
     end
 
     F -- "held-out error for every model" --> T
+    F -- "how the protocol breaks in practice" --> EV
+    MC -- "IPS = importance sampling" --> EV
     T -- "same three first classifiers" --> NB
     LR -- "a penalty on w" --> RG
     RG -- "same penalties, classification losses" --> LC
@@ -101,6 +104,7 @@ flowchart LR
     click SQ "17-sequence-models-and-transformers/" "Sequence models"
     click DF "18-diffusion-and-image-generation/" "Diffusion"
     click RP "19-representation-learning-and-llms/" "Representation learning and LLMs"
+    click EV "20-evaluation/" "Evaluation"
 ```
 
 If the nodes are not clickable in your viewer (GitHub sometimes disables Mermaid links), use the table below.
@@ -129,6 +133,7 @@ If the nodes are not clickable in your viewer (GitHub sometimes disables Mermaid
 | [17 Sequence models and Transformers](17-sequence-models-and-transformers/) | 440: 21, 22 · 340: L35 | RNNs, LSTMs, seq2seq, BPE, beam search, attention, Transformers, BERT / GPT | [`rnn.py`](17-sequence-models-and-transformers/rnn.py), [`transformer.py`](17-sequence-models-and-transformers/transformer.py), [`tokens_and_decoding.py`](17-sequence-models-and-transformers/tokens_and_decoding.py), [worked example](17-sequence-models-and-transformers/worked-example.md) |
 | [18 Diffusion and image generation](18-diffusion-and-image-generation/) | 440: 15 · 340: L36 | diffusion as a hierarchical VAE, classifier(-free) guidance, latent diffusion, evaluating generative models | [`diffusion.py`](18-diffusion-and-image-generation/diffusion.py) |
 | [19 Representation learning and LLMs](19-representation-learning-and-llms/) | 440: 23, 24 · 340: L35, L36 | pretext tasks, contrastive learning, CLIP, SFT, RLHF, failures, fairness | [`contrastive.py`](19-representation-learning-and-llms/contrastive.py) |
+| [20 Evaluation](20-evaluation/) | beyond the slides; builds on 340: L4, L5 · 440: 15, 23, 24 | offline metrics and splits, data leakage, training-serving skew, A/B tests, peeking, interleaving, off-policy evaluation | [`leakage.py`](20-evaluation/leakage.py), [`skew.py`](20-evaluation/skew.py), [`online.py`](20-evaluation/online.py) |
 
 `log-rank-test.pdf` in the same slide folder is a Stat 536 handout on the Mantel–Haenszel / log-rank test, not part
 of either course, so it has no folder here.
@@ -203,6 +208,7 @@ READMEs come from these scripts with their fixed random seeds.
 ├── 17-sequence-models-and-transformers/
 ├── 18-diffusion-and-image-generation/
 ├── 19-representation-learning-and-llms/
+├── 20-evaluation/                       leakage, training-serving skew, online evaluation (beyond the slides)
 ├── tests/test_models.py                 correctness checks for every implementation
 └── requirements.txt
 ```
