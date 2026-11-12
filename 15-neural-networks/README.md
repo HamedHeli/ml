@@ -34,7 +34,9 @@ loss it is multi-class logistic regression on learned features `z_L`.
 
 ## Building blocks and proven architectures
 
-[**building-blocks.md**](building-blocks.md) catalogues the blocks that modern networks are made of and how famous
+[**building-blocks.md**](building-blocks.md) has block diagrams (drawn by [`diagrams.py`](diagrams.py)) of the shared
+skeleton, the original and GPT-style Transformers, multi-head attention, MLP / SwiGLU / mixture of experts, ResNet,
+MobileNet and ConvNeXt blocks, RNN / LSTM / Mamba cells, U-Net, ViT and DiT. It also catalogues the blocks that modern networks are made of and how famous
 architectures combine them. That covers residual connections, normalization (Batch, Layer, RMS, Group), MLPs and gated
 MLPs, convolutions, attention variants and position encodings, gated recurrences and state-space models (Mamba),
 mixture of experts and conditioning. The architectures range from ResNet, U-Net and Transformers to ViT, Mamba and MoE

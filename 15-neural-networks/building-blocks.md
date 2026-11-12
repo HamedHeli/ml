@@ -1,6 +1,16 @@
 # Building blocks and proven architectures
 
-[back to the folder](README.md) · intuition notebook: [`building_blocks.ipynb`](building_blocks.ipynb)
+[back to the folder](README.md) · intuition notebook: [`building_blocks.ipynb`](building_blocks.ipynb) · diagrams drawn by
+[`diagrams.py`](diagrams.py)
+
+**Diagrams on this page:** [the shared skeleton](#the-one-skeleton-behind-most-modern-networks) ·
+[Transformers](#transformers-original-and-gpt-style) · [multi-head attention](#attention-inside) ·
+[MLP, SwiGLU, mixture of experts](#channel-mixers-per-position) · [ResNet, MobileNet, ConvNeXt](#convolutional-blocks) ·
+[RNN, LSTM, Mamba](#recurrent-and-state-space-blocks) · [U-Net](#u-net) · [ViT and DiT](#vision-transformer-and-dit)
+
+Colour code in every diagram: blue = normalization, orange = attention, yellow = MLP, green = convolution, purple =
+linear layer, red-brown = embeddings, teal = position or conditioning inputs, pink = gates; a ⊕ is a residual add, ⊗ a
+multiplication, and a red frame is a block repeated N times.
 
 Most of the architectures that work today are made from about ten blocks, assembled in a few patterns. This page
 lists the blocks, what each one is for, and how the well-known architectures combine them. The notebook runs a small
@@ -8,11 +18,7 @@ experiment for each block.
 
 ## The one skeleton behind most modern networks
 
-```
-x ──► Norm ──► token mixer ──► (+) ──► Norm ──► channel mixer ──► (+) ──► next block
- │                              ▲  │                               ▲
- └──────────── residual ────────┘  └─────────── residual ──────────┘
-```
+![the shared skeleton and its variants](figures/arch_1_skeleton.png)
 
 - The **residual stream** `x` runs straight through the network. Each block reads from it and *adds* its output
   to it: `x ← x + F(Norm(x))`.
@@ -54,6 +60,24 @@ pattern in the token. The matching column of the output matrix is a **value** th
 stream when the pattern fires. MLP layers act as a large key–value memory (Geva et al. 2021). That is where much of a
 language model's factual knowledge is stored.
 
+### Transformers: original and GPT-style
+
+![Transformers](figures/arch_2_transformers.png)
+
+The original Transformer (left) normalizes *after* each residual add ("Add & Norm"). The decoder has three
+sub-layers: masked self-attention over the output so far, **cross-attention** that reads the encoder's output (keys
+and values from the encoder, queries from the decoder), and the MLP. Today's LLMs (right) keep only the decoder, drop
+cross-attention, and move the norm *in front of* each sub-layer (pre-norm). That leaves a clean residual path from
+the top of the network to the bottom.
+
+### Attention inside
+
+![attention](figures/arch_3_attention.png)
+
+Each head computes its own attention pattern in a smaller dimension `d_k = d / h`. The outputs are concatenated and
+mixed by `W_O`, so different heads can track different relations: one the previous word, another the subject of the
+verb.
+
 ## The blocks
 
 ### Channel mixers (per position)
@@ -65,6 +89,8 @@ language model's factual knowledge is stored.
 | **Gated MLP (GLU, SwiGLU)** | `W₂ (SiLU(W₁x) ⊙ W₃x)` | multiplicative interactions: "feature *a* matters only if *b* is present" (notebook §4: about 20× lower error on `x₁x₂`) | LLaMA, PaLM, Mistral and most LLMs since 2022 |
 | **Mixture of experts** | a router picks top-*k* of *E* expert MLPs per token | parameters grow *E*-fold while compute per token stays fixed | Switch Transformer, Mixtral, DeepSeek-V3 |
 | **1×1 convolution** | an MLP applied at each pixel | changes channel count cheaply; mixes channels | ResNet bottlenecks, Inception, MobileNet |
+
+![MLP, SwiGLU and mixture of experts](figures/arch_4_mlps.png)
 
 ### Token mixers (between positions)
 
@@ -81,6 +107,19 @@ language model's factual knowledge is stored.
 | **RNN / LSTM / GRU** | a hidden state updated token by token; LSTM/GRU **gates** decide what to keep | order; recency | `O(n)` but sequential in training | seq2seq before 2017, small on-device models |
 | **State-space / Mamba** | a linear recurrence `h_t = A_t h_{t−1} + B_t x_t`; "selective" = `A_t, B_t` depend on the input | order; compressive memory; gates as in LSTMs | `O(n)`, trained with a parallel scan | Mamba, Jamba and other hybrids |
 | **Graph message passing** | each node aggregates its neighbours' messages | the graph's structure; permutation invariance | `O(edges)` | molecules, social networks, AlphaFold's pair stack |
+
+#### Convolutional blocks
+
+![convolutional blocks](figures/arch_5_conv_blocks.png)
+
+Read the four blocks left to right as ten years of CNN design. ResNet added the residual connection. The bottleneck
+puts the expensive 3×3 convolution in a narrow layer. MobileNet split convolution into a cheap depthwise part (mixing
+pixels) and a 1×1 part (mixing channels). ConvNeXt rearranged that split into exactly the Transformer's
+token-mixer / channel-mixer pattern.
+
+#### Recurrent and state-space blocks
+
+![RNN, LSTM and Mamba](figures/arch_7_recurrent.png)
 
 ### Structure and stability
 
@@ -128,6 +167,18 @@ language model's factual knowledge is stored.
 | **Mamba / hybrid SSM** | [selective SSM + gating] × L, sometimes interleaved with attention | linear-time long context | [17](../17-sequence-models-and-transformers/) |
 | **Mixture-of-experts Transformer** | attention + routed expert MLPs | capacity without compute | – |
 | **Graph neural network** | message passing + MLP per node, residuals | learning on graphs | [14](../14-graphical-models/) (graphs, not GNNs) |
+
+### U-Net
+
+![U-Net](figures/arch_6_unet.png)
+
+### Vision Transformer and DiT
+
+![ViT and DiT](figures/arch_8_vit_dit.png)
+
+ViT is a Transformer encoder whose "tokens" are image patches. DiT, the diffusion Transformer behind Stable
+Diffusion 3 and Sora-style video models, replaces the U-Net denoiser with Transformer blocks. It conditions every
+block through **adaLN**: the time step and the prompt predict the scale and shift of each LayerNorm.
 
 ## How to choose (rules of thumb)
 
