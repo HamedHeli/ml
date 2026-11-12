@@ -440,7 +440,7 @@ def test_edm_preconditioning_and_solvers():
 def test_prompt_to_image_pipeline():
     p = load("18-diffusion-and-image-generation", "prompt_to_image")
     assert p.text_condition("give me the picture of a dog") == "dog" and p.text_condition("") is None
-    imgs, labels, _ = p.make_dataset(n_per_class=40)
+    imgs, labels, _ = p.make_dataset(n_per_class=80)   # needs more than 256 images for a 256-number latent
     ae = p.LinearAutoencoder(imgs)
     Z = ae.encode(imgs)
     assert np.isclose(Z.std(), 1.0) and ae.decode(Z).shape == imgs.shape
