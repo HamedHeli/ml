@@ -115,6 +115,14 @@ Diffusion tooling, and the starting point of EDM2 and of consistency models.
 [`edm.py`](edm.py) implements EDM's preconditioning, loss weighting, noise distribution, `ρ` step spacing and the
 Euler and Heun samplers on the same data as `diffusion.py`.
 
+## Step by step: from a prompt to a picture
+
+[**prompt-to-image.md**](prompt-to-image.md) follows "give me the picture of a dog" through a Stable-Diffusion-style
+pipeline: tokenizer (real CLIP token ids), text encoder, random latent noise, 30 denoising steps with
+classifier-free guidance, and the decoder. Every figure is computed by [`prompt_to_image.py`](prompt_to_image.py) on a
+toy world of cartoon dogs, cats, cars and houses, so you can watch the predicted picture go from "the average of all
+dogs" to one specific dog. The same seed without the prompt becomes a cat instead.
+
 ## Notebook: a diffusion model on 8×8 digits
 
 [**diffusion_digits.ipynb**](diffusion_digits.ipynb) trains a class-conditional DDPM with a small **U-Net** (about
@@ -138,6 +146,7 @@ noise, how does the model know which image you want?"*:
 | File | What it implements |
 | --- | --- |
 | [`diffusion.py`](diffusion.py) | DDPM with `x_0`-prediction, ancestral sampling, classifier-free guidance, 2-D Fréchet distance |
+| [`prompt_to_image.py`](prompt_to_image.py) | the figures for [prompt-to-image.md](prompt-to-image.md): CLIP tokens, a PCA "VAE", exact-denoiser latent diffusion with guidance |
 | [`edm.py`](edm.py) | EDM: preconditioning, `λ(σ)` weighting, log-normal `σ` training, `ρ` step spacing, Euler and Heun ODE samplers, the exact denoiser of a finite training set |
 
 **DDPM** ([`diffusion.py`](diffusion.py)): a DDPM-style model in JAX on 2-D two-moons data. Linear β schedule with `T = 100`,

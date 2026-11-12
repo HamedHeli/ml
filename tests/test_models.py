@@ -437,6 +437,19 @@ def test_edm_preconditioning_and_solvers():
     assert err_h < 0.7 * err_e and err_e < 0.2   # at 35 NFE Heun beats Euler (0.045 vs 0.073)
 
 
+def test_prompt_to_image_pipeline():
+    p = load("18-diffusion-and-image-generation", "prompt_to_image")
+    assert p.text_condition("give me the picture of a dog") == "dog" and p.text_condition("") is None
+    imgs, labels, _ = p.make_dataset(n_per_class=40)
+    ae = p.LinearAutoencoder(imgs)
+    Z = ae.encode(imgs)
+    assert np.isclose(Z.std(), 1.0) and ae.decode(Z).shape == imgs.shape
+    den = p.make_denoiser(Z, labels)
+    for seed in range(3):
+        z, hist = p.generate(den, "a cat", seed, n_steps=20)
+        assert labels[np.argmin(((Z - z[0]) ** 2).sum(1))] == "cat" and len(hist) == 20
+
+
 # 19 ---------------------------------------------------------------------------------
 def test_info_nce_at_init_is_near_log_n():
     import jax
