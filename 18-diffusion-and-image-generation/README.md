@@ -115,6 +115,24 @@ Diffusion tooling, and the starting point of EDM2 and of consistency models.
 [`edm.py`](edm.py) implements EDM's preconditioning, loss weighting, noise distribution, `ρ` step spacing and the
 Euler and Heun samplers on the same data as `diffusion.py`.
 
+## Notebook: a diffusion model on 8×8 digits
+
+[**diffusion_digits.ipynb**](diffusion_digits.ipynb) trains a class-conditional DDPM with a small **U-Net** (about
+270k parameters: conv blocks, residual blocks with time and class embeddings, self-attention at 4×4, skip
+connections). It takes about 5 minutes on a CPU. The notebook documents the network's structure with a diagram, the
+layer-by-layer shapes and a parameter count per block. It is built around the question *"if every image ends as pure
+noise, how does the model know which image you want?"*:
+
+- **The forward process erases the image.** By the last step the correlation with the original is 0, so the model
+  cannot recover a particular image. It learns the distribution and draws a **new** sample. Unconditional samples
+  cover all ten digits and are as far from their nearest training image as training images are from each other.
+- **The noise is a random seed and sets the style.** With a deterministic sampler (DDIM), the same noise gives the
+  same image every time, and interpolating between two noises morphs one digit into another.
+- **The condition sets the content.** The same 8 noises with labels 0–9 give the requested digit in 100% of 80
+  samples. Classifier-free guidance raises label accuracy from 97% to 100%.
+- **To get a variation of a specific image, start from that image noised part-way (SDEdit).** After noising a 7 to
+  `t = 40` and denoising, 100% of results are still 7s; at `t = 120`, 60%; at full noise, 10% (chance).
+
 ## Code in this folder
 
 | File | What it implements |

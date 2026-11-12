@@ -32,6 +32,28 @@ loss it is multi-class logistic regression on learned features `z_L`.
 - **Training is non-convex**: initialization (He / Glorot scaling), step size, momentum, mini-batch SGD, weight decay,
   early stopping and dropout are what make it work in practice, with little theory behind them ("babysitting").
 
+## Building blocks and proven architectures
+
+[**building-blocks.md**](building-blocks.md) catalogues the blocks that modern networks are made of and how famous
+architectures combine them. That covers residual connections, normalization (Batch, Layer, RMS, Group), MLPs and gated
+MLPs, convolutions, attention variants and position encodings, gated recurrences and state-space models (Mamba),
+mixture of experts and conditioning. The architectures range from ResNet, U-Net and Transformers to ViT, Mamba and MoE
+LLMs. Most of them share one skeleton: a residual stream with alternating **token mixers** and **channel mixers**,
+each behind a normalization layer.
+
+[**building_blocks.ipynb**](building_blocks.ipynb) builds intuition with one small experiment per block (about 1 min on
+a CPU):
+
+| § | Experiment | Result |
+| --- | --- | --- |
+| 1 | plain vs. residual MLPs, 4 to 128 layers, same training | plain: test accuracy 0.97 → 0.88 → 0.18 → 0.06 as depth grows; residual: 0.96–0.98 at every depth |
+| 2 | LayerNorm vs. BatchNorm on three tokens; activation scale through 50 layers | LayerNorm maps `x` and `10x` to the same vector but keeps different tokens different; it holds the scale fixed for any initialization |
+| 3 | attention with and without positions; RoPE | attention alone is permutation-equivariant; RoPE scores depend only on the relative offset |
+| 4 | ReLU MLP vs. gated (GLU) MLP on `x₁x₂`, same size | test MSE 0.0023 vs. 0.0001 |
+| 5 | convolution | translation equivariance, 36,864 vs. 10¹³ parameters, receptive-field growth |
+| 6 | fixed decay vs. selective gate, remembering a marked value | best fixed decay: correlation 0.10; selective gate: 1.00 |
+| 7 | dense MLP vs. 4-expert top-1 MoE, same compute per input | test MSE 0.026 vs. 0.009; the router learns one region per expert |
+
 ## Code in this folder
 
 [`mlp.py`](mlp.py): a multi-layer perceptron in NumPy with a hand-written backward pass (ReLU or sigmoid, optional

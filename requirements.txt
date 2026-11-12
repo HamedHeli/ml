@@ -12,3 +12,7 @@ optax>=0.2.2
 
 # Tests
 pytest>=8.0
+
+# Notebooks (15/building_blocks.ipynb, 18/diffusion_digits.ipynb)
+matplotlib>=3.8
+jupyter
