@@ -416,6 +416,27 @@ def test_diffusion_posterior_coefficients():
     assert np.isclose(resid.var(), d.SIG2[t], rtol=0.02)
 
 
+def test_edm_preconditioning_and_solvers():
+    e = load("18-diffusion-and-image-generation", "edm")
+    import jax.numpy as jnp
+    sig = jnp.array([0.01, 1.0, 80.0])
+    c_skip, c_out, c_in, _ = e.precond(sig)
+    # the effective training target (y - c_skip x)/c_out has unit variance when y ~ N(0, sd^2), x = y + sigma n
+    sd = e.SIGMA_DATA
+    var_target = ((1 - c_skip) ** 2 * sd ** 2 + c_skip ** 2 * sig ** 2) / c_out ** 2
+    assert np.allclose(var_target, 1, atol=1e-5)
+    assert np.allclose(c_in ** 2 * (sd ** 2 + sig ** 2), 1)
+    s = e.sigma_steps(18)
+    assert np.isclose(s[0], 80) and np.isclose(s[-2], 0.002) and s[-1] == 0 and np.all(np.diff(s) < 0)
+    # Gaussian data: the exact denoiser is linear and the ODE maps N(0, sigma_max^2 + sd^2) to N(0, sd^2)
+    den = lambda x, sg: x * sd ** 2 / (sd ** 2 + sg ** 2)
+    x0 = np.array([[80.0, -40.0]])
+    exact = x0 * sd / np.sqrt(80.0 ** 2 + sd ** 2)
+    err_e = abs(e.ode_sample(den, x0, 35, "euler")[0] - exact).max()
+    err_h = abs(e.ode_sample(den, x0, 18, "heun")[0] - exact).max()
+    assert err_h < 0.5 * err_e and err_e < 0.2
+
+
 # 19 ---------------------------------------------------------------------------------
 def test_info_nce_at_init_is_near_log_n():
     import jax
