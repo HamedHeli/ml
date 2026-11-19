@@ -182,6 +182,9 @@ block through **adaLN**: the time step and the prompt predict the scale and shif
 
 ## How to choose (rules of thumb)
 
+For decoder LLMs specifically, [LLM architecture design](../17-sequence-models-and-transformers/llm-architecture-design.md)
+goes through 77 recent models and gives the design steps in order, with the evidence behind each.
+
 - **Start from the skeleton**: residual stream, pre-norm, token mixer, channel mixer. The common recipes (AdamW,
   warm-up, cosine decay) are tuned for it.
 - **Pick the token mixer by data:** grids with local structure (images, audio) → convolutions, or attention on

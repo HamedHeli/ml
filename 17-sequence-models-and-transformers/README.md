@@ -47,6 +47,12 @@ permutation-equivariant, so **position encodings** (sinusoidal, learned, or rota
 gives a decoder (GPT, trained to predict the next token); no mask gives an encoder (BERT, trained to fill in masked
 tokens). Vision Transformers apply the same blocks to image patches.
 
+**Modern LLM architectures:** [LLM architecture design](llm-architecture-design.md) codes the 77 readable models of
+Raschka's LLM Architecture Gallery (GPT-2 to mid-2026), sorts them into eight families, compares them in one table,
+and turns the trends into a step-by-step design process: why each layer is there (pre-norm, RMSNorm, RoPE, SwiGLU,
+GQA/MLA, sliding-window and linear-attention hybrids, MoE, QK-norm, no dropout), with the strength of the evidence
+for each.
+
 **Worked example:** [one token through one Transformer block](worked-example.md) follows "tree" in "I am the tree I saw
 yesterday" through Q/K/V, softmax, the weighted sum of Values, residual + LayerNorm and the 4 → 16 → 4 MLP, with numbers
 you can check by hand.
@@ -58,6 +64,7 @@ you can check by hand.
 | [`rnn.py`](rnn.py) | vanilla RNN and LSTM with `lax.scan`, gradient clipping, a "recall the marked first token after `T` distractors" task |
 | [`transformer.py`](transformer.py) | causal multi-head self-attention, sinusoidal position encodings, pre-norm blocks with GELU MLPs, the same recall task, attention inspection |
 | [`tokens_and_decoding.py`](tokens_and_decoding.py) | byte-pair encoding (learn merges, encode new words), beam search vs. greedy vs. exact decoding |
+| [`llm_architectures.py`](llm_architectures.py) | the gallery's architectures as data, the family classifier, adoption counts by period, the comparison table and the figures in [llm-architecture-design.md](llm-architecture-design.md) |
 | [`worked_example.py`](worked_example.py) | the hand calculation in [worked-example.md](worked-example.md): attention, residual + LayerNorm, 4 → 16 → 4 MLP |
 
 ```bash
@@ -65,6 +72,7 @@ python 17-sequence-models-and-transformers/rnn.py                   # about 2 mi
 python 17-sequence-models-and-transformers/transformer.py           # about 1 min
 python 17-sequence-models-and-transformers/tokens_and_decoding.py
 python 17-sequence-models-and-transformers/worked_example.py      # instant
+python 17-sequence-models-and-transformers/llm_architectures.py   # instant; rewrites the CSV and figures/llm_*.png
 ```
 
 Recall the first of `T` tokens (8 symbols, chance = 0.125), test accuracy after the same training budget:
@@ -91,7 +99,8 @@ The trained Transformer's last token puts 0.998 of one layer-2 head's attention 
   experiment; with a bias of 3 it solved `T = 80`. Initialization details like this (and chrono-initialization) decide
   whether gated RNNs learn long dependencies at all; the slides present LSTMs as simply solving the problem.
 - **GRUs**, and why gating is a learned, input-dependent version of the state-space recurrence.
-- **Training Transformers**: learning-rate warm-up, AdamW, pre-norm vs. post-norm stability, mixed precision, and the
+- **Training Transformers**: learning-rate warm-up, AdamW, pre-norm vs. post-norm stability (see
+  [LLM architecture design](llm-architecture-design.md) for how today's LLMs place their norms), mixed precision, and the
   KV-cache that makes autoregressive decoding `O(T)` per token.
 - **Efficient attention** for long contexts (FlashAttention, sparse/linear attention) and modern state-space models
   (S4, Mamba), which the slides mention as an RNN revival without detail.

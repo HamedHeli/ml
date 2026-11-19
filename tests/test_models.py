@@ -400,6 +400,28 @@ def test_bpe_and_beam_search():
     assert m.beam_search(ln, 4, 3 ** 4, 3)[0] == best
 
 
+
+def test_llm_gallery_data_consistent():
+    m = load("17-sequence-models-and-transformers", "llm_architectures")
+    names = [x.name for x in m.MODELS]
+    assert len(names) == len(set(names)) == 77 and len(m.UNREAD) == 49
+    for x in m.MODELS:
+        assert x.active_b is None or 0 < x.active_b <= x.total_b, x.name
+        assert x.moe or x.active_b == x.total_b or "per-layer" in x.notes, x.name
+        if x.n_local is not None and x.layers is not None:
+            assert x.n_local + x.n_global <= x.layers, x.name      # hybrid layer counts fit in the stack
+        if x.hybrid in (None, "DSA"):
+            assert x.n_local is None, x.name
+        assert m.family(x) in m.FAMILIES
+    # every period count adds up, and the headline trend in the page holds
+    tab = m.adoption_table()
+    assert sum(n for _, n in tab["QK-norm"].values()) == 77
+    c, n = tab["KV-sharing attention (GQA/MQA/MLA/compressed)"]["2026"]
+    assert c == n
+    assert m.family(next(x for x in m.MODELS if x.name == "DeepSeek V3")) == "D"
+    assert m.family(next(x for x in m.MODELS if x.name == "Qwen3 Next 80B-A3B")) == "F"
+    assert m.markdown_table().count("\n") == 77 + 8 + 1
+
 # 18 ---------------------------------------------------------------------------------
 def test_diffusion_posterior_coefficients():
     d = load("18-diffusion-and-image-generation", "diffusion")
