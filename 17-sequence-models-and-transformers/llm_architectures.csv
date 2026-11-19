@@ -1,0 +1,78 @@
+name,org,date,total_b,active_b,layers,attn,hybrid,n_local,n_global,qk_norm,norm,pos,ffn,moe,experts,top_k,shared,dense_prefix,mtp,context_k,kv_kib,notes,family
+GPT-2 XL,OpenAI,2019-11,1.5,1.5,48,MHA,,,,False,pre,learned,GELU,False,,,,,False,1,300,"LayerNorm, dropout 0.1, biases everywhere",H
+Llama 3 8B,Meta,2024-04,8,8,32,GQA,,,,False,pre,RoPE,SwiGLU,False,,,,,False,8,128,,A
+Llama 3.2 1B,Meta,2024-09,1,1,16,GQA,,,,False,pre,RoPE,SwiGLU,False,,,,,False,128,32,tied embeddings; pruned + distilled,A
+OLMo 2 7B,Ai2,2024-11,7,7,32,MHA,,,,True,post-inside,RoPE,SwiGLU,False,,,,,False,4,512,,A
+DeepSeek V3,DeepSeek,2024-12,671,37,61,MLA,,,,False,,RoPE,SwiGLU,True,256,8,True,True,True,128,68.6,,D
+DeepSeek R1,DeepSeek,2025-01,671,37,61,MLA,,,,False,,RoPE,SwiGLU,True,256,8,True,True,True,128,68.6,"V3 architecture, reasoning post-training",D
+Gemma 3 27B,Google,2025-03,27,27,62,GQA,SWA,52,10,True,sandwich,RoPE,GeGLU,False,,,,,False,128,496,vocab 262k,B
+Mistral Small 3.1 24B,Mistral AI,2025-03,24,24,40,GQA,,,,False,pre,RoPE,SwiGLU,False,,,,,False,128,160,dropped the sliding window of earlier Mistrals,A
+Llama 4 Maverick,Meta,2025-04,400,17,48,GQA,chunked,36,12,False,pre,RoPE+NoPE,SwiGLU,True,128,1,True,,False,1000,192,NoPE in the full-attention layers; dense and MoE blocks alternate,E
+Qwen3 0.6B,Alibaba,2025-04,0.6,0.6,28,GQA,,,,True,pre,RoPE,SwiGLU,False,,,,,False,32,112,,A
+Qwen3 235B-A22B,Alibaba,2025-04,235,22,94,GQA,,,,True,pre,RoPE,SwiGLU,True,128,8,False,,False,128,188,,C
+Qwen3 30B-A3B,Alibaba,2025-04,30,3,48,GQA,,,,True,pre,RoPE,SwiGLU,True,128,8,False,,False,128,96,,C
+Qwen3 32B,Alibaba,2025-04,32,32,64,GQA,,,,True,pre,RoPE,SwiGLU,False,,,,,False,128,256,,A
+Qwen3 4B,Alibaba,2025-04,4,4,36,GQA,,,,True,pre,RoPE,SwiGLU,False,,,,,False,32,144,,A
+Qwen3 8B,Alibaba,2025-04,8,8,36,GQA,,,,True,pre,RoPE,SwiGLU,False,,,,,False,128,144,,A
+SmolLM3 3B,Hugging Face,2025-06,3,3,36,GQA,,,,False,pre,RoPE+NoPE,SwiGLU,False,,,,,False,128,72,every fourth layer drops RoPE,A
+Kimi K2,Moonshot AI,2025-07,1000,32,61,MLA,,,,False,pre,RoPE,SwiGLU,True,384,8,True,True,False,128,68.6,"DeepSeek V3 template, more experts",D
+GLM-4.5,Z.ai,2025-07,355,32,92,GQA,,,,True,pre,RoPE,SwiGLU,True,160,8,True,True,True,128,368,,C
+GPT-OSS 120B,OpenAI,2025-08,117,5.1,36,GQA,SWA,18,18,False,pre,RoPE,SwiGLU,True,128,4,False,,False,128,72,attention bias and learned attention sinks,E
+GPT-OSS 20B,OpenAI,2025-08,21,3.6,24,GQA,SWA,12,12,False,pre,RoPE,SwiGLU,True,32,4,False,,False,128,48,wider and shallower than Qwen3,E
+Gemma 3 270M,Google,2025-08,0.27,0.27,18,MQA,SWA,15,3,True,sandwich,RoPE,GeGLU,False,,,,,False,32,18,,B
+Grok 2.5,xAI,2025-08,270,,64,GQA,,,,False,,RoPE,SwiGLU,True,8,2,True,,False,128,256,active params not on the card; always-on SwiGLU path acts like a shared expert,C
+Qwen3 Next 80B-A3B,Alibaba,2025-09,80,3,48,GQA,DeltaNet,36,12,True,pre,RoPE,SwiGLU,True,512,10,True,,True,256,24,gated attention,F
+MiniMax M2,MiniMax,2025-10,230,10,62,GQA,,,,True,pre,partial RoPE,SwiGLU,True,256,8,,,True,192,248,,C
+Kimi Linear 48B-A3B,Moonshot AI,2025-10,48,3,27,MLA,KDA,20,7,False,pre,NoPE+recurrent,SwiGLU,True,256,8,True,,False,1000,7.9,short conv on Q/K/V in KDA layers,F
+OLMo 3 32B,Ai2,2025-11,32,32,64,GQA,SWA,48,16,True,post-inside,RoPE,SwiGLU,False,,,,,False,64,256,YaRN on global layers only,B
+OLMo 3 7B,Ai2,2025-11,7,7,32,MHA,SWA,24,8,True,post-inside,RoPE,SwiGLU,False,,,,,False,64,512,,B
+DeepSeek V3.2,DeepSeek,2025-12,671,37,61,MLA,DSA,,,False,pre,RoPE,SwiGLU,True,256,8,True,True,True,128,68.6,DeepSeek Sparse Attention,D
+Mistral Large 3,Mistral AI,2025-12,673,41,61,MLA,,,,False,pre,RoPE,SwiGLU,True,,,True,,False,256,68.6,"near-clone of DeepSeek V3, fewer larger experts",D
+Nemotron 3 Nano 30B-A3B,NVIDIA,2025-12,30,3,52,GQA,Mamba-2,23,6,False,pre,NoPE+recurrent,ReLU2,True,,,,,False,1000,6,"52 blocks: 6 GQA, 23 Mamba-2, 23 MoE",G
+MiMo-V2-Flash,Xiaomi,2025-12,309,15,48,GQA,SWA,40,8,False,,RoPE,SwiGLU,True,,,,,True,256,144,128-token window,E
+GLM-4.7,Z.ai,2025-12,355,32,92,GQA,,,,True,pre,RoPE,SwiGLU,True,160,8,True,True,True,198,368,,C
+Arcee Trinity Large,Arcee AI,2026-01,400,13,60,GQA,SWA,45,15,True,sandwich,RoPE+NoPE,SwiGLU,True,,,,,False,512,240,"gated attention, coarse-grained MoE",E
+GLM-5,Z.ai,2026-02,744,40,78,MLA,DSA,,,False,,RoPE,SwiGLU,True,,,,,True,198,87.8,,D
+Nemotron 3 Super,NVIDIA,2026-03,120,12,88,GQA,Mamba-2,40,8,False,pre,NoPE+recurrent,ReLU2,True,,,,,True,1000,8,latent-space MoE,G
+Gemma 4 31B,Google,2026-04,30.7,30.7,60,GQA,SWA,50,10,True,sandwich,partial RoPE,GeGLU,False,,,,,False,256,840,p-RoPE and unified K/V on global layers,B
+Gemma 4 26B-A4B,Google,2026-04,25.2,3.8,30,GQA,SWA,25,5,True,sandwich,partial RoPE,GeGLU,True,128,8,True,,False,256,210,,E
+Gemma 4 12B,Google,2026-06,12,12,48,GQA,SWA,40,8,True,sandwich,partial RoPE,GeGLU,False,,,,,False,256,328,,B
+Llama 3.2 3B,Meta,2024-09,3,3,28,GQA,,,,False,pre,RoPE,SwiGLU,False,,,,,False,128,112,tied embeddings,A
+Qwen3 Coder Flash 30B-A3B,Alibaba,2025-07,30,3.3,48,GQA,,,,True,pre,RoPE,SwiGLU,True,128,8,False,,False,256,96,,C
+Kimi K2.5,Moonshot AI,2026-01,1000,32,61,MLA,,,,False,pre,RoPE,SwiGLU,True,384,8,True,True,False,256,68.6,,D
+Step 3.5 Flash,StepFun,2026-02,196,11,48,GQA,SWA,36,12,False,,RoPE,SwiGLU,True,,,,,True,256,192,,E
+Nanbeige 4.1 3B,BOSS Zhipin,2026-02,3,3,32,GQA,,,,False,pre,RoPE,SwiGLU,False,,,,,False,256,64,untied embeddings,A
+MiniMax M2.5,MiniMax,2026-02,230,10,62,GQA,,,,True,pre,partial RoPE,SwiGLU,True,,,,,True,192,248,deliberately avoids SWA and linear hybrids,C
+Tiny Aya 3.35B,Cohere,2026-02,3.35,3.35,36,GQA,SWA,27,9,False,parallel,RoPE+NoPE,SwiGLU,False,,,,,False,8,72,attention and MLP in parallel,B
+Ling 2.5 1T,InclusionAI,2026-02,1000,63,80,MLA,Lightning,70,10,False,,RoPE,SwiGLU,True,,,,,False,256,11.2,,F
+Qwen3.5 397B,Alibaba,2026-02,397,17,60,GQA,DeltaNet,45,15,True,pre,RoPE,SwiGLU,True,512,,,,False,256,30,gated attention,F
+Sarvam 30B,Sarvam AI,2026-03,30,2.4,19,GQA,,,,True,,RoPE,SwiGLU,True,,,,,False,128,19,,C
+Sarvam 105B,Sarvam AI,2026-03,105,10.3,32,MLA,,,,False,,RoPE+NoPE,SwiGLU,True,,,,,False,128,36,KV LayerNorm,D
+Phi-4 14B,Microsoft,2024-12,14,14,40,GQA,,,,False,pre,RoPE,SwiGLU,False,,,,,False,16,200,,A
+xLSTM 7B,NXAI,2025-03,7,7,32,none,mLSTM,32,0,False,pre,none,gated MLP,False,,,,,False,,0,no attention; matrix-memory recurrence,H
+GLM-4.5-Air,Z.ai,2025-07,106,12,46,GQA,,,,True,pre,RoPE,SwiGLU,True,,,True,True,True,128,184,,C
+Ouro-Thinking 2.6B,ByteDance,2025-10,2.6,2.6,48,MHA,,,,False,sandwich,RoPE,SiLU,False,,,,,False,64,1536,"looped: 48 shared layers x 4 passes, learned exit gate",H
+INTELLECT-3,Prime Intellect,2025-11,106,12,46,GQA,,,,True,pre,RoPE,SwiGLU,True,,,True,True,True,128,184,GLM-4.5-Air architecture,C
+LongCat-Flash-Lite,Meituan,2026-01,68.5,3,28,MLA,,,,False,,RoPE+NoPE,SiLU,True,256,12,,,False,256,31.5,128 zero/identity experts; n-gram embeddings,D
+Mistral Small 4,Mistral AI,2026-03,119,6.63,36,MLA,,,,False,,RoPE,SwiGLU,True,128,4,True,,False,256,22.5,,D
+Nemotron 3 Nano 4B,NVIDIA,2026-03,4,4,42,GQA,Mamba-2,21,4,False,pre,NoPE+recurrent,ReLU2,False,,,,,False,256,16,,G
+MiniMax M2.7,MiniMax,2026-03,230,10,62,GQA,,,,True,pre,partial RoPE,SwiGLU,True,,,,,True,200,248,,C
+Gemma 4 E2B,Google,2026-04,5.1,2.3,35,MQA,SWA,28,7,True,sandwich,partial RoPE,GeGLU,False,,,,,False,128,35,"per-layer embeddings, KV sharing",B
+Gemma 4 E4B,Google,2026-04,8,4.5,42,GQA,SWA,35,7,True,sandwich,partial RoPE,GeGLU,False,,,,,False,128,84,"per-layer embeddings, KV sharing",B
+DeepSeek V4-Flash,DeepSeek,2026-04,284,13,43,CSA/HCA,,,,False,,RoPE,SwiGLU,True,256,6,True,,True,1024,5.4,compressed attention; mHC residual; hash routing,D
+DeepSeek V4-Pro,DeepSeek,2026-04,1600,49,61,CSA/HCA,,,,False,,RoPE,SwiGLU,True,384,6,True,,True,1024,7.7,compressed attention; mHC residual; hash routing,D
+Laguna XS.2,Poolside,2026-04,33,3,40,GQA,SWA,30,10,True,,RoPE,SwiGLU,True,,8,True,,False,256,160,"gated attention, 512-token window, sigmoid routing",E
+ZAYA1-8B,Zyphra,2026-05,8.4,0.76,40,GQA,,,,True,,RoPE,SiLU,True,,1,,,False,128,40,compressed convolutional attention (CCA),C
+GLM-5.1,Z.ai,2026-04,744,40,78,MLA,DSA,,,False,,RoPE,SwiGLU,True,,,,,True,198,87.8,,D
+Qwen3.6 35B-A3B,Alibaba,2026-04,35,3,40,GQA,DeltaNet,30,10,True,pre,RoPE,SwiGLU,True,256,8,True,,False,256,20,,F
+Kimi K2.6,Moonshot AI,2026-04,1000,32,61,MLA,,,,False,pre,RoPE,SwiGLU,True,384,8,True,True,False,256,68.6,,D
+Qwen3.6 27B,Alibaba,2026-04,27,27,64,GQA,DeltaNet,48,16,True,pre,RoPE,SwiGLU,False,,,,,False,256,64,,F
+MiMo-V2.5,Xiaomi,2026-04,310,15,48,GQA,SWA,39,9,False,,RoPE,SwiGLU,True,,,,,True,1024,144,,E
+MiMo-V2.5-Pro,Xiaomi,2026-04,1020,42,70,GQA,SWA,60,10,False,,RoPE,SwiGLU,True,384,8,,,False,1024,350,,E
+Ling 2.6 1T,InclusionAI,2026-04,1000,63,80,MLA,Lightning,70,10,False,,RoPE,SwiGLU,True,,,,,True,256,11.2,,F
+Tencent Hy3-preview,Tencent,2026-04,295,21,80,GQA,,,,True,,RoPE,SwiGLU,True,192,8,True,True,True,256,320,sigmoid routing with expert bias,C
+Granite 4.1 30B,IBM,2026-04,30,30,64,GQA,,,,False,pre,RoPE,SwiGLU,False,,,,,False,128,256,"tied embeddings, muP scaling",A
+Command A+,Cohere,2026-05,218,25,32,GQA,SWA,24,8,False,parallel,RoPE+NoPE,SwiGLU,True,,,,,False,128,128,attention and MoE in parallel,E
+LFM2.5 1.2B,Liquid AI,2026-05,1.2,1.2,16,GQA,conv,10,6,True,,RoPE,SiLU,False,,,,,False,32,12,,G
+LFM2.5 350M,Liquid AI,2026-05,0.35,0.35,16,GQA,conv,10,6,True,,RoPE,SiLU,False,,,,,False,32,12,,G
+LFM2.5 8B-A1B,Liquid AI,2026-05,8.3,1.5,,GQA,conv,,,True,,RoPE,SiLU,True,32,4,,,False,128,,,G
