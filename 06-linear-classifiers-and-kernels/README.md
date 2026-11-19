@@ -32,6 +32,11 @@ All predict `sign(wᵀx)` (or `argmax_c w_cᵀx`). They differ in the loss that 
 `p(y | x, w) = σ(y wᵀx)`; adding `(λ/2)‖w‖²` is MAP with a `N(0, I/λ)` prior. It models only `p(y | x)`, the
 **discriminative** counterpart of naive Bayes, which models `p(x, y)`.
 
+**Its loss, in depth:** [logistic regression's loss](logistic-loss-deviance-kl.md) works through why the
+`{0, 1}` cross-entropy, the `{−1, +1}` logistic loss, the negative log-likelihood and the GLM deviance are one
+objective, how cross-entropy splits into entropy + KL divergence, why deviance is 2 × a summed KL, and where the factor
+2 (Wilks' `χ²` test) comes from.
+
 ### The kernel trick
 
 L2-regularized least squares with features `Z = φ(X)` can be solved two ways:
@@ -58,11 +63,13 @@ bounces around in a ball; it converges only with decreasing steps (e.g. `α_t �
 | File | What it implements |
 | --- | --- |
 | [`linear_classifiers.py`](linear_classifiers.py) | perceptron; logistic, hinge and softmax losses with gradients; gradient descent with Armijo backtracking; SGD with constant / `1/√t` steps and iterate averaging |
+| [`logistic_deviance.py`](logistic_deviance.py) | checks for [logistic-loss-deviance-kl.md](logistic-loss-deviance-kl.md): `{0,1}` cross-entropy = `{−1,+1}` logistic loss, cross-entropy = entropy + KL, deviance = 2 Σ KL for 0/1, grouped binomial and Poisson data, a simulated Wilks test |
 | [`kernels.py`](kernels.py) | polynomial and RBF kernels, an explicit degree-2 feature map that checks the trick, kernel ridge regression, kernel logistic regression over the dual weights |
 
 ```bash
 python 06-linear-classifiers-and-kernels/linear_classifiers.py
 python 06-linear-classifiers-and-kernels/kernels.py
+python 06-linear-classifiers-and-kernels/logistic_deviance.py
 ```
 
 | Result (saved run) | |
@@ -73,6 +80,8 @@ python 06-linear-classifiers-and-kernels/kernels.py
 | SGD, `1/√t` step, last / averaged | 210.3 / **167.8** |
 | degree-2 kernel vs. explicit features | predictions agree to 1e-11 |
 | concentric circles, linear / poly-2 / poly-4 / RBF kernel logistic regression, test error | 0.495 / 0.005 / 0.005 / 0.005 |
+| 400 binary labels: deviance ungrouped / grouped by `x` (same `β̂`) | 467.1 / 2.58 on 3 df |
+| Wilks likelihood-ratio test, true slope 0, 2000 simulations: rejection rate at 5% | 0.054 |
 
 ## Knowledge gap
 
