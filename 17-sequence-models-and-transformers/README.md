@@ -53,6 +53,11 @@ and turns the trends into a step-by-step design process: why each layer is there
 GQA/MLA, sliding-window and linear-attention hybrids, MoE, QK-norm, no dropout), with the strength of the evidence
 for each.
 
+**Inside the block:** [inside a modern LLM block](llm-block-mechanisms.md) takes the settled choices one at a time
+(residual stream, pre-norm, RMSNorm, SwiGLU, RoPE, no dropout, no biases, GQA, plus the `1/√d` scale, causal mask,
+QK-norm, depth-scaled init, final norm and tied embeddings): what each computes, where it sits, the role it plays
+and what breaks without it, each with a small numerical check.
+
 **Worked example:** [one token through one Transformer block](worked-example.md) follows "tree" in "I am the tree I saw
 yesterday" through Q/K/V, softmax, the weighted sum of Values, residual + LayerNorm and the 4 → 16 → 4 MLP, with numbers
 you can check by hand.
@@ -65,6 +70,7 @@ you can check by hand.
 | [`transformer.py`](transformer.py) | causal multi-head self-attention, sinusoidal position encodings, pre-norm blocks with GELU MLPs, the same recall task, attention inspection |
 | [`tokens_and_decoding.py`](tokens_and_decoding.py) | byte-pair encoding (learn merges, encode new words), beam search vs. greedy vs. exact decoding |
 | [`llm_architectures.py`](llm_architectures.py) | the gallery's architectures as data, the family classifier, adoption counts by period, the comparison table and the figures in [llm-architecture-design.md](llm-architecture-design.md) |
+| [`llm_block_mechanisms.py`](llm_block_mechanisms.py) | one check per mechanism in [llm-block-mechanisms.md](llm-block-mechanisms.md): signal through depth, post- vs pre-norm training, RMSNorm properties, score scaling, QK-norm, RoPE's relative property, dropout regimes, inert attention biases, GQA and KV-cache sizes |
 | [`worked_example.py`](worked_example.py) | the hand calculation in [worked-example.md](worked-example.md): attention, residual + LayerNorm, 4 → 16 → 4 MLP |
 
 ```bash
@@ -72,6 +78,7 @@ python 17-sequence-models-and-transformers/rnn.py                   # about 2 mi
 python 17-sequence-models-and-transformers/transformer.py           # about 1 min
 python 17-sequence-models-and-transformers/tokens_and_decoding.py
 python 17-sequence-models-and-transformers/worked_example.py      # instant
+python 17-sequence-models-and-transformers/llm_block_mechanisms.py # about 2 min
 python 17-sequence-models-and-transformers/llm_architectures.py   # instant; rewrites the CSV and figures/llm_*.png
 ```
 

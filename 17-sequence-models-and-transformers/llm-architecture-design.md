@@ -2,7 +2,8 @@
 
 [back to the folder](README.md) · data and figures: [`llm_architectures.py`](llm_architectures.py) ·
 table as CSV: [`llm_architectures.csv`](llm_architectures.csv) · the blocks themselves:
-[building blocks](../15-neural-networks/building-blocks.md)
+[building blocks](../15-neural-networks/building-blocks.md) · one level down, mechanism by mechanism:
+[inside a modern LLM block](llm-block-mechanisms.md)
 
 **Source.** Sebastian Raschka's [LLM Architecture Gallery](https://sebastianraschka.com/llm-architecture-gallery/),
 read on 2026-11-19. The gallery lists 126 open-weight LLMs. The cards of **77** of them could be read, and those 77
@@ -24,7 +25,9 @@ rules: which layer comes after which, where normalization goes, when to use drop
   the models disagree with each other.
 
 The rest of the page has the evidence: a classification, the comparison table, the trends, and then the engineering
-process step by step, with an evidence level on every step.
+process step by step, with an evidence level on every step. For the settled mechanisms, [inside a modern LLM block](llm-block-mechanisms.md)
+goes deeper: what each one computes, exactly where it sits in the block, the role it plays, and what breaks without
+it, with a small experiment for each.
 
 **Evidence levels used below**
 
@@ -407,6 +410,9 @@ regularization.
   235B has 94. Ouro loops 48 shared layers four times. Scaling-law studies (Kaplan et al. 2020) found loss
   depends only weakly on the shape at a fixed parameter count. So the shape is usually chosen for hardware:
   parallelism, latency, KV size. **No rule here.**
+
+Steps 1–7 and 11 are taken apart one mechanism at a time, with experiments, in [inside a modern LLM
+block](llm-block-mechanisms.md).
 
 ## The process as one checklist
 

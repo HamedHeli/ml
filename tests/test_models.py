@@ -422,6 +422,31 @@ def test_llm_gallery_data_consistent():
     assert m.family(next(x for x in m.MODELS if x.name == "Qwen3 Next 80B-A3B")) == "F"
     assert m.markdown_table().count("\n") == 77 + 8 + 1
 
+
+def test_llm_block_mechanisms():
+    m = load("17-sequence-models-and-transformers", "llm_block_mechanisms")
+    s = m.signal_through_depth(L=24)
+    assert s["plain"]["grad_ratio"] < 1e-5 < 0.5 < s["residual"]["grad_ratio"]
+    lg = m.last_layer_grad_vs_depth((6, 48))
+    assert lg["pre"][48] < 0.5 * lg["pre"][6] and lg["post"][48] > 0.8 * lg["post"][6]
+    d = m.depth_scaled_init()
+    assert d["scaled 1/sqrt(2L)"] < 1.5 < d["standard"]
+    r = m.rmsnorm_properties()
+    assert r["scale_invariant"] < 1e-4 and r["ln_equals_rms_of_centred"] < 1e-5 and abs(r["grad_dot_x"]) < 1e-4
+    assert r["shift_changes_rms"] > 1 and r["shift_changes_ln"] < 1e-4
+    assert all(row["entropy_scaled"] > row["entropy_raw"] + 1 for row in m.attention_scaling()["rows"])
+    q = m.qk_norm()["rows"]
+    assert q[-1]["entropy_raw"] < 0.1 and abs(q[-1]["entropy_qknorm"] - q[0]["entropy_qknorm"]) < 1e-6
+    ro = m.rope_relative()
+    assert ro["rope_shift_error"] < 1e-8 and ro["absolute_shift_error"] > 1 and ro["rope_norm_change"] < 1e-10
+    assert abs(m.swiglu_param_match()["ratio"] - 1) < 1e-3
+    dr = m.dropout_regimes()
+    assert dr["small_dropout"] < dr["small_no_dropout"] and dr["stream_dropout"] > dr["stream_no_dropout"]
+    b = m.attention_biases()
+    assert b["key_bias_effect"] < 1e-10 and b["value_bias_minus_constant"] < 1e-10 and b["bias_fraction"] < 1e-3
+    g = m.gqa_equivalence()
+    assert g["g=h_equals_mha"] < 1e-10 and g["kv_bytes_per_token"]["GQA (8 KV heads)"] == 128 * 1024
+
 # 18 ---------------------------------------------------------------------------------
 def test_diffusion_posterior_coefficients():
     d = load("18-diffusion-and-image-generation", "diffusion")
