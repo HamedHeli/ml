@@ -186,6 +186,20 @@ def test_kernel_trick_equals_explicit_features():
     assert np.allclose(m.explicit_poly2(X) @ m.explicit_poly2(Xt).T, m.poly_kernel(X, Xt, 2))
 
 
+def test_cross_entropy_deviance_kl_identities():
+    o = load("06-linear-classifiers-and-kernels", "logistic_deviance").checks()
+    assert np.isclose(o["bce"], o["logistic_pm1"]) and o["H_onehot"] == 0
+    assert np.isclose(o["ce_soft"], o["H_soft_plus_KL"])
+    assert np.isclose(o["ce_soft_at_perfect_model"], o["H_soft"]) and o["H_soft"] > 0
+    assert np.isclose(o["dev_ungrouped"], o["2_sum_KL_ungrouped"])
+    assert np.allclose(o["beta_grouped"], o["beta_ungrouped"], atol=1e-8)
+    assert o["l_sat_grouped"] < 0 and np.isclose(o["dev_grouped"], o["2_sum_mKL_grouped"])
+    assert np.isclose(o["dev_poisson"], o["2_sum_KL_poisson"])
+    assert not np.isclose(o["l_sat_poisson"], o["minus_sum_H_poisson"])
+    assert 0.035 < o["wilks_rejection_rate_at_5pct"] < 0.065
+    assert o["gaussian_loglik_sigma_0.01"] > 0
+
+
 # 07 ---------------------------------------------------------------------------------
 def test_beta_bernoulli_and_dirichlet():
     from scipy.special import betaln

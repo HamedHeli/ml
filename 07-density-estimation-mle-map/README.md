@@ -95,7 +95,8 @@ Bernoullis reaches −19.4 ([10](../10-mixture-models-and-em/)) and a VAE about 
 - **Duality** between the natural parameters `w` and the mean parameters `μ = ∇A(w)`, and the convex conjugate `A*`
   (bonus slide only), which underlies variational inference ([12](../12-variational-inference-and-vaes/)).
 - **GLM practice**: link functions, over-dispersion (negative binomial when Poisson variance is too small), offsets
-  and exposure, deviance.
+  and exposure, deviance (worked through for logistic and Poisson regression in
+  [06: logistic regression's loss](../06-linear-classifiers-and-kernels/logistic-loss-deviance-kl.md)).
 - Density estimation evaluation: held-out log-likelihood and why bits-per-dimension is used for images.
 
 **Prerequisites to shore up**
