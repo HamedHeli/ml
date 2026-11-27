@@ -53,6 +53,12 @@ filters flag African-American English and queer content at higher rates). Comput
 demographic parity, equalized odds) conflict with each other and cannot fix a problem whose framing is wrong. Training
 and serving large models has real energy, water and labour costs.
 
+## Current research: how LLMs are being improved
+
+[How people are improving LLMs now](llm-improvement-research.md) maps the seven directions of current work (data and
+distillation, smaller models, test-time compute, RL post-training, architecture, systems, agents), with key papers
+for each and links back to the course concepts they reuse.
+
 ## Code in this folder
 
 [`contrastive.py`](contrastive.py): SimCLR-style contrastive learning in JAX on 8×8 digits. Augmentations are random
