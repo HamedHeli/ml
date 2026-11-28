@@ -58,6 +58,12 @@ for each.
 QK-norm, depth-scaled init, final norm and tied embeddings): what each computes, where it sits, the role it plays
 and what breaks without it, each with a small numerical check.
 
+**Questions about the anatomy:** [transformer anatomy, question by question](transformer-anatomy-qa.md) answers
+eight questions from a chat: a SwiGLU gate vs. Mixture of Experts, the two-layer MLP, why `W_up`/`W_down` are not an
+encoder/decoder, what makes BERT an encoder and chat LLMs decoders, where a chatbot's vectors come from, what the KV
+cache stores, how 32 query heads share 8 K/V heads, and Llama 3 8B's matrix shapes and parameter count.
+
+
 **Positions and RoPE:** [how RoPE positions tokens](rope-positions.md) answers where position 0 is, how the counter
 and the KV cache work during generation, why each token gets 64 angles at 64 speeds (the clock with many hands, and
 why Llama 3 raised the base to 500 000), a worked sentence, and context extension (position interpolation, NTK, YaRN).
@@ -75,6 +81,7 @@ you can check by hand.
 | [`tokens_and_decoding.py`](tokens_and_decoding.py) | byte-pair encoding (learn merges, encode new words), beam search vs. greedy vs. exact decoding |
 | [`llm_architectures.py`](llm_architectures.py) | the gallery's architectures as data, the family classifier, adoption counts by period, the comparison table and the figures in [llm-architecture-design.md](llm-architecture-design.md) |
 | [`llm_block_mechanisms.py`](llm_block_mechanisms.py) | one check per mechanism in [llm-block-mechanisms.md](llm-block-mechanisms.md): signal through depth, post- vs pre-norm training, RMSNorm properties, score scaling, QK-norm, RoPE's relative property, dropout regimes, inert attention biases, GQA and KV-cache sizes |
+| [`transformer_anatomy.py`](transformer_anatomy.py) | the checks in [transformer-anatomy-qa.md](transformer-anatomy-qa.md): SwiGLU vs. MoE weight use, causal vs. bidirectional masks, KV-cache decoding with GQA = full recompute, Llama 3 8B shapes, parameters and KV-cache sizes |
 | [`rope_positions.py`](rope_positions.py) | the checks in [rope-positions.md](rope-positions.md): per-pair frequency table, clock uniqueness, relative-only scores, KV-cache decoding vs full recompute, the worked sentence, PI / NTK / YaRN angle ranges |
 | [`worked_example.py`](worked_example.py) | the hand calculation in [worked-example.md](worked-example.md): attention, residual + LayerNorm, 4 → 16 → 4 MLP |
 
@@ -85,6 +92,7 @@ python 17-sequence-models-and-transformers/tokens_and_decoding.py
 python 17-sequence-models-and-transformers/rope_positions.py      # under a second
 python 17-sequence-models-and-transformers/worked_example.py      # instant
 python 17-sequence-models-and-transformers/llm_block_mechanisms.py # about 2 min
+python 17-sequence-models-and-transformers/transformer_anatomy.py  # under a second
 python 17-sequence-models-and-transformers/llm_architectures.py   # instant; rewrites the CSV and figures/llm_*.png
 ```
 

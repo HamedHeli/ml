@@ -480,6 +480,21 @@ def test_llm_block_mechanisms():
     g = m.gqa_equivalence()
     assert g["g=h_equals_mha"] < 1e-10 and g["kv_bytes_per_token"]["GQA (8 KV heads)"] == 128 * 1024
 
+def test_transformer_anatomy():
+    m = load("17-sequence-models-and-transformers", "transformer_anatomy")
+    s = m.swiglu_vs_moe()
+    assert s["swiglu_weight_fraction_used"] == 1 and s["moe_weight_fraction_used"] == 2 / 64
+    assert -0.279 < s["gate_min"] < -0.278 and s["gate_at_plus_4"] > 3.9
+    c = m.causal_vs_bidirectional()
+    assert c["decoder (causal)"] == 0 and c["encoder (bidirectional)"] > 0.01
+    k = m.decode_with_kv_cache()
+    assert k["max_abs_diff"] < 1e-12 and k["token_projections_with_cache"] < k["token_projections_without_cache"]
+    assert m.gqa_grouping()["K/V head 1"] == [4, 5, 6, 7]
+    r = m.llama3_8b()
+    assert r["q_width_equals_d_model"] and abs(r["params_total"] / 1e9 - 8.03) < 0.005
+    assert r["kv_bytes_per_token"]["GQA (8 K/V heads)"] == 128 * 1024
+    assert r["kv_bytes_at_8k"]["MHA (32 K/V heads)"] == 4 * 2**30
+
 # 18 ---------------------------------------------------------------------------------
 def test_diffusion_posterior_coefficients():
     d = load("18-diffusion-and-image-generation", "diffusion")

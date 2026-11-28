@@ -2,7 +2,9 @@
 
 [back to the folder](README.md) · the design process and the gallery evidence: [LLM architecture
 design](llm-architecture-design.md) · numerical checks: [`llm_block_mechanisms.py`](llm_block_mechanisms.py) · the
-blocks in general: [building blocks](../15-neural-networks/building-blocks.md)
+blocks in general: [building blocks](../15-neural-networks/building-blocks.md) · common
+questions about the anatomy (gate vs. MoE, encoder vs. decoder, KV cache, Llama 3 8B shapes): [question by
+question](transformer-anatomy-qa.md)
 
 [LLM architecture design](llm-architecture-design.md) shows *that* every LLM since 2024 makes the same handful of
 choices (residual stream, pre-norm, RMSNorm, gated MLP, RoPE, no dropout and no biases, shared K/V heads), and gives
