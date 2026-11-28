@@ -437,6 +437,25 @@ def test_llm_gallery_data_consistent():
     assert m.markdown_table().count("\n") == 77 + 8 + 1
 
 
+def test_rope_positions():
+    m = load("17-sequence-models-and-transformers", "rope_positions")
+    rows = {(r["base"], r["pair"]): r for r in m.frequency_table()}
+    assert rows[(10000.0, 63)]["turns_in_window"] > 1 > rows[(500000.0, 63)]["turns_in_window"]
+    c = m.clock_uniqueness()
+    assert c["fast_pair_dist_at_that_offset"] < 0.05 and c["all_pairs_argmin_offset"] == 1
+    assert m.relative_only()["spread"] < 1e-8
+    kv = m.kv_cache_decode()
+    assert kv["max_diff"] < 1e-10 and kv["decode_positions"] == list(range(12, 20))
+    s = m.score_vs_distance()
+    assert s[0] == 128 and s[65536] < s[256] < s[1]
+    se = m.sentence_example()
+    assert abs(se["got_he_score"] - se["got_he_score_shifted"]) < 1e-8 and se["offsets_from_got"]["She@0"] == 9
+    assert se["rows"][2]["deg"][0] != se["rows"][10]["deg"][0]
+    ce = m.context_extension()
+    assert ce["none"]["pairs_out_of_range"] > 0 and ce["PI"]["pairs_out_of_range"] == 0
+    assert ce["YaRN"]["pairs_out_of_range"] == 0 and ce["YaRN"]["fast_pair_speed_ratio"] == 1
+
+
 def test_llm_block_mechanisms():
     m = load("17-sequence-models-and-transformers", "llm_block_mechanisms")
     s = m.signal_through_depth(L=24)

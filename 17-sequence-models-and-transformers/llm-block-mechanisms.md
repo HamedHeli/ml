@@ -197,6 +197,9 @@ and by 22.8 with a sinusoidal embedding added to the input (typical score size 8
 
 The KV cache stores keys *after* rotation. A key computed at position `n` never needs to be recomputed.
 
+More on positions (where 0 is, decoding, the per-pair frequencies, context extension): [how RoPE positions
+tokens](rope-positions.md).
+
 ## ⑥ No dropout in pretraining ●●○
 
 **What.** Dropout probability 0 everywhere: on attention weights, on the residual branches, on the embedding.
